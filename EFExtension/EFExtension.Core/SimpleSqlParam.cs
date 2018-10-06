@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace EFExtension.Core
 {
+    /// <summary>
+    /// Simple sql parameter for easier to use
+    /// </summary>
     public class SimpleSqlParam
     {
         public string Name { get; set; }
