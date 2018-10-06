@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/EFExtension/.vs/EFExtension/v15
+/EFExtension/EFExtension.Console/bin/Debug
+/EFExtension/EFExtension.Console/obj/Debug
+/EFExtension/EFExtension.Core/bin/Debug
+/EFExtension/EFExtension.Core/obj/Debug
+/EFExtension/packages
