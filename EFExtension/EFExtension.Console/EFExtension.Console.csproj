@@ -69,5 +69,9 @@
       <Name>EFExtension.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="SampleData\sample-data.sql" />
+    <Content Include="SampleData\sample-model.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
