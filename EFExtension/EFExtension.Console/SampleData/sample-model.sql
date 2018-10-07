@@ -1,306 +1,173 @@
-﻿if exists (select 1
-   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
-   where r.fkeyid = object_id('"Order"') and o.name = 'FK_ORDER_REFERENCE_CUSTOMER')
-alter table "Order"
-   drop constraint FK_ORDER_REFERENCE_CUSTOMER
-go
-
-if exists (select 1
-   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
-   where r.fkeyid = object_id('OrderItem') and o.name = 'FK_ORDERITE_REFERENCE_ORDER')
-alter table OrderItem
-   drop constraint FK_ORDERITE_REFERENCE_ORDER
-go
-
-if exists (select 1
-   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
-   where r.fkeyid = object_id('OrderItem') and o.name = 'FK_ORDERITE_REFERENCE_PRODUCT')
-alter table OrderItem
-   drop constraint FK_ORDERITE_REFERENCE_PRODUCT
-go
-
-if exists (select 1
-   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
-   where r.fkeyid = object_id('Product') and o.name = 'FK_PRODUCT_REFERENCE_SUPPLIER')
-alter table Product
-   drop constraint FK_PRODUCT_REFERENCE_SUPPLIER
-go
-
-if exists (select 1
-            from  sysindexes
-           where  id    = object_id('Customer')
-            and   name  = 'IndexCustomerName'
-            and   indid > 0
-            and   indid < 255)
-   drop index Customer.IndexCustomerName
-go
-
-if exists (select 1
-            from  sysobjects
-           where  id = object_id('Customer')
-            and   type = 'U')
-   drop table Customer
-go
-
-if exists (select 1
-            from  sysindexes
-           where  id    = object_id('"Order"')
-            and   name  = 'IndexOrderOrderDate'
-            and   indid > 0
-            and   indid < 255)
-   drop index "Order".IndexOrderOrderDate
-go
-
-if exists (select 1
-            from  sysindexes
-           where  id    = object_id('"Order"')
-            and   name  = 'IndexOrderCustomerId'
-            and   indid > 0
-            and   indid < 255)
-   drop index "Order".IndexOrderCustomerId
-go
-
-if exists (select 1
-            from  sysobjects
-           where  id = object_id('"Order"')
-            and   type = 'U')
-   drop table "Order"
-go
-
-if exists (select 1
-            from  sysindexes
-           where  id    = object_id('OrderItem')
-            and   name  = 'IndexOrderItemProductId'
-            and   indid > 0
-            and   indid < 255)
-   drop index OrderItem.IndexOrderItemProductId
-go
-
-if exists (select 1
-            from  sysindexes
-           where  id    = object_id('OrderItem')
-            and   name  = 'IndexOrderItemOrderId'
-            and   indid > 0
-            and   indid < 255)
-   drop index OrderItem.IndexOrderItemOrderId
-go
-
-if exists (select 1
-            from  sysobjects
-           where  id = object_id('OrderItem')
-            and   type = 'U')
-   drop table OrderItem
-go
-
-if exists (select 1
-            from  sysindexes
-           where  id    = object_id('Product')
-            and   name  = 'IndexProductName'
-            and   indid > 0
-            and   indid < 255)
-   drop index Product.IndexProductName
-go
-
-if exists (select 1
-            from  sysindexes
-           where  id    = object_id('Product')
-            and   name  = 'IndexProductSupplierId'
-            and   indid > 0
-            and   indid < 255)
-   drop index Product.IndexProductSupplierId
-go
-
-if exists (select 1
-            from  sysobjects
-           where  id = object_id('Product')
-            and   type = 'U')
-   drop table Product
-go
-
-if exists (select 1
-            from  sysindexes
-           where  id    = object_id('Supplier')
-            and   name  = 'IndexSupplierCountry'
-            and   indid > 0
-            and   indid < 255)
-   drop index Supplier.IndexSupplierCountry
-go
-
-if exists (select 1
-            from  sysindexes
-           where  id    = object_id('Supplier')
-            and   name  = 'IndexSupplierName'
-            and   indid > 0
-            and   indid < 255)
-   drop index Supplier.IndexSupplierName
-go
-
-if exists (select 1
-            from  sysobjects
-           where  id = object_id('Supplier')
-            and   type = 'U')
-   drop table Supplier
-go
-
-/*==============================================================*/
-/* Table: Customer                                              */
-/*==============================================================*/
-create table Customer (
-   Id                   int                  identity,
-   FirstName            nvarchar(40)         not null,
-   LastName             nvarchar(40)         not null,
-   City                 nvarchar(40)         null,
-   Country              nvarchar(40)         null,
-   Phone                nvarchar(20)         null,
-   constraint PK_CUSTOMER primary key (Id)
-)
-go
-
-/*==============================================================*/
-/* Index: IndexCustomerName                                     */
-/*==============================================================*/
-create index IndexCustomerName on Customer (
-LastName ASC,
-FirstName ASC
-)
-go
-
-/*==============================================================*/
-/* Table: "Order"                                               */
-/*==============================================================*/
-create table "Order" (
-   Id                   int                  identity,
-   OrderDate            datetime             not null default getdate(),
-   OrderNumber          nvarchar(10)         null,
-   CustomerId           int                  not null,
-   TotalAmount          decimal(12,2)        null default 0,
-   constraint PK_ORDER primary key (Id)
-)
-go
-
-/*==============================================================*/
-/* Index: IndexOrderCustomerId                                  */
-/*==============================================================*/
-create index IndexOrderCustomerId on "Order" (
-CustomerId ASC
-)
-go
-
-/*==============================================================*/
-/* Index: IndexOrderOrderDate                                   */
-/*==============================================================*/
-create index IndexOrderOrderDate on "Order" (
-OrderDate ASC
-)
-go
-
-/*==============================================================*/
-/* Table: OrderItem                                             */
-/*==============================================================*/
-create table OrderItem (
-   Id                   int                  identity,
-   OrderId              int                  not null,
-   ProductId            int                  not null,
-   UnitPrice            decimal(12,2)        not null default 0,
-   Quantity             int                  not null default 1,
-   constraint PK_ORDERITEM primary key (Id)
-)
-go
-
-/*==============================================================*/
-/* Index: IndexOrderItemOrderId                                 */
-/*==============================================================*/
-create index IndexOrderItemOrderId on OrderItem (
-OrderId ASC
-)
-go
-
-/*==============================================================*/
-/* Index: IndexOrderItemProductId                               */
-/*==============================================================*/
-create index IndexOrderItemProductId on OrderItem (
-ProductId ASC
-)
-go
-
-/*==============================================================*/
-/* Table: Product                                               */
-/*==============================================================*/
-create table Product (
-   Id                   int                  identity,
-   ProductName          nvarchar(50)         not null,
-   SupplierId           int                  not null,
-   UnitPrice            decimal(12,2)        null default 0,
-   Package              nvarchar(30)         null,
-   IsDiscontinued       bit                  not null default 0,
-   constraint PK_PRODUCT primary key (Id)
-)
-go
-
-/*==============================================================*/
-/* Index: IndexProductSupplierId                                */
-/*==============================================================*/
-create index IndexProductSupplierId on Product (
-SupplierId ASC
-)
-go
-
-/*==============================================================*/
-/* Index: IndexProductName                                      */
-/*==============================================================*/
-create index IndexProductName on Product (
-ProductName ASC
-)
-go
-
-/*==============================================================*/
-/* Table: Supplier                                              */
-/*==============================================================*/
-create table Supplier (
-   Id                   int                  identity,
-   CompanyName          nvarchar(40)         not null,
-   ContactName          nvarchar(50)         null,
-   ContactTitle         nvarchar(40)         null,
-   City                 nvarchar(40)         null,
-   Country              nvarchar(40)         null,
-   Phone                nvarchar(30)         null,
-   Fax                  nvarchar(30)         null,
-   constraint PK_SUPPLIER primary key (Id)
-)
-go
-
-/*==============================================================*/
-/* Index: IndexSupplierName                                     */
-/*==============================================================*/
-create index IndexSupplierName on Supplier (
-CompanyName ASC
-)
-go
-
-/*==============================================================*/
-/* Index: IndexSupplierCountry                                  */
-/*==============================================================*/
-create index IndexSupplierCountry on Supplier (
-Country ASC
-)
-go
-
-alter table "Order"
-   add constraint FK_ORDER_REFERENCE_CUSTOMER foreign key (CustomerId)
-      references Customer (Id)
-go
-
-alter table OrderItem
-   add constraint FK_ORDERITE_REFERENCE_ORDER foreign key (OrderId)
-      references "Order" (Id)
-go
-
-alter table OrderItem
-   add constraint FK_ORDERITE_REFERENCE_PRODUCT foreign key (ProductId)
-      references Product (Id)
-go
-
-alter table Product
-   add constraint FK_PRODUCT_REFERENCE_SUPPLIER foreign key (SupplierId)
-      references Supplier (Id)
-go
+﻿IF EXISTS
+  (SELECT 1
+   FROM sys.sysreferences r
+   JOIN sys.sysobjects o ON (o.id = r.constid
+                             AND o.type = 'F')
+   WHERE r.fkeyid = object_id('"Order"')
+     AND o.name = 'FK_ORDER_REFERENCE_CUSTOMER')
+ALTER TABLE "Order"
+DROP CONSTRAINT FK_ORDER_REFERENCE_CUSTOMER GO IF EXISTS
+  (SELECT 1
+   FROM sys.sysreferences r
+   JOIN sys.sysobjects o ON (o.id = r.constid
+                             AND o.type = 'F')
+   WHERE r.fkeyid = object_id('OrderItem')
+     AND o.name = 'FK_ORDERITE_REFERENCE_ORDER')
+ALTER TABLE OrderItem
+DROP CONSTRAINT FK_ORDERITE_REFERENCE_ORDER GO IF EXISTS
+  (SELECT 1
+   FROM sys.sysreferences r
+   JOIN sys.sysobjects o ON (o.id = r.constid
+                             AND o.type = 'F')
+   WHERE r.fkeyid = object_id('OrderItem')
+     AND o.name = 'FK_ORDERITE_REFERENCE_PRODUCT')
+ALTER TABLE OrderItem
+DROP CONSTRAINT FK_ORDERITE_REFERENCE_PRODUCT GO IF EXISTS
+  (SELECT 1
+   FROM sys.sysreferences r
+   JOIN sys.sysobjects o ON (o.id = r.constid
+                             AND o.type = 'F')
+   WHERE r.fkeyid = object_id('Product')
+     AND o.name = 'FK_PRODUCT_REFERENCE_SUPPLIER')
+ALTER TABLE Product
+DROP CONSTRAINT FK_PRODUCT_REFERENCE_SUPPLIER GO IF EXISTS
+  (SELECT 1
+   FROM sysindexes
+   WHERE id = object_id('Customer')
+     AND name = 'IndexCustomerName'
+     AND indid > 0
+     AND indid < 255)
+DROP INDEX Customer.IndexCustomerName GO IF EXISTS
+  (SELECT 1
+   FROM sysobjects
+   WHERE id = object_id('Customer')
+     AND TYPE = 'U')
+DROP TABLE Customer GO IF EXISTS
+  (SELECT 1
+   FROM sysindexes
+   WHERE id = object_id('"Order"')
+     AND name = 'IndexOrderOrderDate'
+     AND indid > 0
+     AND indid < 255)
+DROP INDEX "Order".IndexOrderOrderDate GO IF EXISTS
+  (SELECT 1
+   FROM sysindexes
+   WHERE id = object_id('"Order"')
+     AND name = 'IndexOrderCustomerId'
+     AND indid > 0
+     AND indid < 255)
+DROP INDEX "Order".IndexOrderCustomerId GO IF EXISTS
+  (SELECT 1
+   FROM sysobjects
+   WHERE id = object_id('"Order"')
+     AND TYPE = 'U')
+DROP TABLE "Order" GO IF EXISTS
+  (SELECT 1
+   FROM sysindexes
+   WHERE id = object_id('OrderItem')
+     AND name = 'IndexOrderItemProductId'
+     AND indid > 0
+     AND indid < 255)
+DROP INDEX OrderItem.IndexOrderItemProductId GO IF EXISTS
+  (SELECT 1
+   FROM sysindexes
+   WHERE id = object_id('OrderItem')
+     AND name = 'IndexOrderItemOrderId'
+     AND indid > 0
+     AND indid < 255)
+DROP INDEX OrderItem.IndexOrderItemOrderId GO IF EXISTS
+  (SELECT 1
+   FROM sysobjects
+   WHERE id = object_id('OrderItem')
+     AND TYPE = 'U')
+DROP TABLE OrderItem GO IF EXISTS
+  (SELECT 1
+   FROM sysindexes
+   WHERE id = object_id('Product')
+     AND name = 'IndexProductName'
+     AND indid > 0
+     AND indid < 255)
+DROP INDEX Product.IndexProductName GO IF EXISTS
+  (SELECT 1
+   FROM sysindexes
+   WHERE id = object_id('Product')
+     AND name = 'IndexProductSupplierId'
+     AND indid > 0
+     AND indid < 255)
+DROP INDEX Product.IndexProductSupplierId GO IF EXISTS
+  (SELECT 1
+   FROM sysobjects
+   WHERE id = object_id('Product')
+     AND TYPE = 'U')
+DROP TABLE Product GO IF EXISTS
+  (SELECT 1
+   FROM sysindexes
+   WHERE id = object_id('Supplier')
+     AND name = 'IndexSupplierCountry'
+     AND indid > 0
+     AND indid < 255)
+DROP INDEX Supplier.IndexSupplierCountry GO IF EXISTS
+  (SELECT 1
+   FROM sysindexes
+   WHERE id = object_id('Supplier')
+     AND name = 'IndexSupplierName'
+     AND indid > 0
+     AND indid < 255)
+DROP INDEX Supplier.IndexSupplierName GO IF EXISTS
+  (SELECT 1
+   FROM sysobjects
+   WHERE id = object_id('Supplier')
+     AND TYPE = 'U')
+DROP TABLE Supplier GO /*==============================================================*/ /* Table: Customer                                              */ /*==============================================================*/
+CREATE TABLE Customer ( Id int IDENTITY,
+                               FirstName nvarchar(40) NOT NULL,
+                                                      LastName nvarchar(40) NOT NULL,
+                                                                            City nvarchar(40) NULL,
+                                                                                              Country nvarchar(40) NULL,
+                                                                                                                   Phone nvarchar(20) NULL,
+                                                                                                                                      CONSTRAINT PK_CUSTOMER PRIMARY KEY (Id)) GO /*==============================================================*/ /* Index: IndexCustomerName                                     */ /*==============================================================*/
+CREATE INDEX IndexCustomerName ON Customer (LastName ASC, FirstName ASC) GO /*==============================================================*/ /* Table: "Order"                                               */ /*==============================================================*/
+CREATE TABLE "Order" ( Id int IDENTITY,
+                              OrderDate datetime NOT NULL DEFAULT getdate(),
+                                                                  OrderNumber nvarchar(10) NULL,
+                                                                                           CustomerId int NOT NULL,
+                                                                                                          TotalAmount decimal(12, 2) NULL DEFAULT 0,
+                                                                                                                                                  CONSTRAINT PK_ORDER PRIMARY KEY (Id)) GO /*==============================================================*/ /* Index: IndexOrderCustomerId                                  */ /*==============================================================*/
+CREATE INDEX IndexOrderCustomerId ON "Order" (CustomerId ASC) GO /*==============================================================*/ /* Index: IndexOrderOrderDate                                   */ /*==============================================================*/
+CREATE INDEX IndexOrderOrderDate ON "Order" (OrderDate ASC) GO /*==============================================================*/ /* Table: OrderItem                                             */ /*==============================================================*/
+CREATE TABLE OrderItem ( Id int IDENTITY,
+                                OrderId int NOT NULL,
+                                            ProductId int NOT NULL,
+                                                          UnitPrice decimal(12, 2) NOT NULL DEFAULT 0,
+                                                                                                    Quantity int NOT NULL DEFAULT 1,
+                                                                                                                                  CONSTRAINT PK_ORDERITEM PRIMARY KEY (Id)) GO /*==============================================================*/ /* Index: IndexOrderItemOrderId                                 */ /*==============================================================*/
+CREATE INDEX IndexOrderItemOrderId ON OrderItem (OrderId ASC) GO /*==============================================================*/ /* Index: IndexOrderItemProductId                               */ /*==============================================================*/
+CREATE INDEX IndexOrderItemProductId ON OrderItem (ProductId ASC) GO /*==============================================================*/ /* Table: Product                                               */ /*==============================================================*/
+CREATE TABLE Product ( Id int IDENTITY,
+                              ProductName nvarchar(50) NOT NULL,
+                                                       SupplierId int NOT NULL,
+                                                                      UnitPrice decimal(12, 2) NULL DEFAULT 0,
+                                                                                                            PACKAGE nvarchar(30) NULL,
+                                                                                                                                 IsDiscontinued bit NOT NULL DEFAULT 0,
+                                                                                                                                                                     CONSTRAINT PK_PRODUCT PRIMARY KEY (Id)) GO /*==============================================================*/ /* Index: IndexProductSupplierId                                */ /*==============================================================*/
+CREATE INDEX IndexProductSupplierId ON Product (SupplierId ASC) GO /*==============================================================*/ /* Index: IndexProductName                                      */ /*==============================================================*/
+CREATE INDEX IndexProductName ON Product (ProductName ASC) GO /*==============================================================*/ /* Table: Supplier                                              */ /*==============================================================*/
+CREATE TABLE Supplier ( Id int IDENTITY,
+                               CompanyName nvarchar(40) NOT NULL,
+                                                        ContactName nvarchar(50) NULL,
+                                                                                 ContactTitle nvarchar(40) NULL,
+                                                                                                           City nvarchar(40) NULL,
+                                                                                                                             Country nvarchar(40) NULL,
+                                                                                                                                                  Phone nvarchar(30) NULL,
+                                                                                                                                                                     Fax nvarchar(30) NULL,
+                                                                                                                                                                                      CONSTRAINT PK_SUPPLIER PRIMARY KEY (Id)) GO /*==============================================================*/ /* Index: IndexSupplierName                                     */ /*==============================================================*/
+CREATE INDEX IndexSupplierName ON Supplier (CompanyName ASC) GO /*==============================================================*/ /* Index: IndexSupplierCountry                                  */ /*==============================================================*/
+CREATE INDEX IndexSupplierCountry ON Supplier (Country ASC) GO
+ALTER TABLE "Order" ADD CONSTRAINT FK_ORDER_REFERENCE_CUSTOMER
+FOREIGN KEY (CustomerId) REFERENCES Customer (Id) GO
+ALTER TABLE OrderItem ADD CONSTRAINT FK_ORDERITE_REFERENCE_ORDER
+FOREIGN KEY (OrderId) REFERENCES "Order" (Id) GO
+ALTER TABLE OrderItem ADD CONSTRAINT FK_ORDERITE_REFERENCE_PRODUCT
+FOREIGN KEY (ProductId) REFERENCES Product (Id) GO
+ALTER TABLE Product ADD CONSTRAINT FK_PRODUCT_REFERENCE_SUPPLIER
+FOREIGN KEY (SupplierId) REFERENCES Supplier (Id) GO

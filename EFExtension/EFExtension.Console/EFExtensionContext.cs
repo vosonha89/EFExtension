@@ -1,4 +1,5 @@
 ﻿using EFExtension.Console.Entity;
+using EFExtension.Console.Views;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -15,6 +16,9 @@ namespace EFExtension.Console
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Customer> Customers { get; set; }
+
+        // Views
+        public DbSet<ProductWithSupplierView> ProductWithSupplierView { get; set; }
 
         public EFExtensionContext() : base("DefautConnection")
         {

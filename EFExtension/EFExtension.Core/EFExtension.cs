@@ -75,7 +75,7 @@ namespace EFExtension.Core
         /// <param name="storeName">Store name for execution</param>
         /// <param name="parameters">Array of parameters</param>
         /// <returns>List result set after mapping</returns>
-        public static List<T> ExcuteStoreProcedure<T>(this DbContext context, string storeName) where T : class, new()
+        public static List<T> ExcuteStoreProcedureOneResultSet<T>(this DbContext context, string storeName) where T : class, new()
         {
             string query = storeName;
             return context.Database.SqlQuery<T>(query).ToList();
@@ -89,7 +89,7 @@ namespace EFExtension.Core
         /// <param name="storeName">Store name for execution</param>
         /// <param name="parameters">Array of parameters</param>
         /// <returns>List result set after mapping</returns>
-        public static List<T> ExcuteStoreProcedure<T>(this DbContext context, string storeName, params SimpleSqlParam[] parameters) where T : class, new()
+        public static List<T> ExcuteStoreProcedureOneResultSet<T>(this DbContext context, string storeName, params SimpleSqlParam[] parameters) where T : class, new()
         {
             string query = storeName;
             List<SqlParameter> sqlParameters = new List<SqlParameter>();
@@ -114,7 +114,7 @@ namespace EFExtension.Core
         /// <param name="storeName">Store name for execution</param>
         /// <param name="parameters">Array of parameters</param>
         /// <returns>List result set after mapping</returns>
-        public static List<T> ExcuteStoreProcedure<T>(this DbContext context, string storeName, params SqlParameter[] parameters) where T : class, new()
+        public static List<T> ExcuteStoreProcedureOneResultSet<T>(this DbContext context, string storeName, params SqlParameter[] parameters) where T : class, new()
         {
             string query = storeName;
             query = query + " " + string.Join(",", parameters.ToList());
@@ -128,7 +128,7 @@ namespace EFExtension.Core
         /// <param name="storeName">Store name for execution</param>
         /// <param name="parameters">Array of parameters</param>
         /// <returns>Wrapper for multiple result set</returns>
-        public static MultipleResultSetWrapper ExcuteStoreProcedure(this DbContext context, string storeName)
+        public static MultipleResultSetWrapper ExcuteStoreProcedureMultipleResultSet(this DbContext context, string storeName)
         {
             MultipleResultSetWrapper wrapper = new MultipleResultSetWrapper(context, storeName, null);
             return wrapper;
@@ -141,7 +141,7 @@ namespace EFExtension.Core
         /// <param name="storeName">Store name for execution</param>
         /// <param name="parameters">Array of parameters</param>
         /// <returns>Wrapper for multiple result set</returns>
-        public static MultipleResultSetWrapper ExcuteStoreProcedure(this DbContext context, string storeName, params SimpleSqlParam[] parameters)
+        public static MultipleResultSetWrapper ExcuteStoreProcedureMultipleResultSet(this DbContext context, string storeName, params SimpleSqlParam[] parameters)
         {
             List<SqlParameter> sqlParameters = new List<SqlParameter>();
             foreach (SimpleSqlParam param in parameters)
@@ -164,7 +164,7 @@ namespace EFExtension.Core
         /// <param name="storeName">Store name for execution</param>
         /// <param name="parameters">Array of parameters</param>
         /// <returns>Wrapper for multiple result set</returns>
-        public static MultipleResultSetWrapper ExcuteStoreProcedure(this DbContext context, string storeName, params SqlParameter[] parameters)
+        public static MultipleResultSetWrapper ExcuteStoreProcedureMultipleResultSet(this DbContext context, string storeName, params SqlParameter[] parameters)
         {
             MultipleResultSetWrapper wrapper = new MultipleResultSetWrapper(context, storeName, parameters);
             return wrapper;
