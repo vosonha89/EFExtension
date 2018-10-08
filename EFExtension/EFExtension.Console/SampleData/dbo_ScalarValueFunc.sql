@@ -1,0 +1,7 @@
+﻿CREATE FUNCTION dbo.ScalarValueFunc (@Value DATETIME)
+RETURNS DATETIME
+AS
+BEGIN  
+    RETURN @Value
+END
+GO
