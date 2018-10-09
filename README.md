@@ -28,21 +28,22 @@ Extension for entity framework in .NET Framework. Helping developers are easy to
   > **Contex.ExecuteStoreProcedureMultipleResultSet**
   * Example: 
   ```C#
-  List<object> result3 = ctx.ExecuteStoreProcedureMultipleResultSet("dbo.sp_GetOrderDetail",
+   List<object> result2 = ctx.ExecuteStoreProcedureMultipleResultSet("dbo.sp_GetOrderDetail",
+                          new SimpleSqlParam { Name = "@OrderId", Value = order.Id },
+                          new SimpleSqlParam { Name = "@CustomerId", Value = 1 })
+                          .With<OrderItem>()
+                          .With<Customer>()
+                          .Execute();
+  ```
+  * Or
+  ```C#
+   List<object> result3 = ctx.ExecuteStoreProcedureMultipleResultSet("dbo.sp_GetOrderDetail",
                         new SqlParameter { ParameterName = "@OrderId", Value = order.Id },
                         new SqlParameter { ParameterName = "@CustomerId", Value = 1 })
                         .With<OrderItem>()
                         .With<Customer>()
                         .Execute();
-  ```
-  * Or
-  ```C#
-  List<object> result2 = ctx.ExecuteStoreProcedureMultipleResultSet("dbo.sp_GetOrderDetail",
-                        new SimpleSqlParam { Name = "@OrderId", Value = order.Id },
-                        new SimpleSqlParam { Name = "@CustomerId", Value = 1 })
-                        .With<OrderItem>()
-                        .With<Customer>()
-                        .Execute();
+  
   ```                        
 # 2. How to call Function
 - Scalar:
